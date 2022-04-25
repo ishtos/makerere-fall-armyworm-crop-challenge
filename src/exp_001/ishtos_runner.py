@@ -100,7 +100,7 @@ class Runner:
 
 class Validator(Runner):
     def load_df(self):
-        df = pd.read_csv(self.config.dataset.train_df)
+        df = pd.read_csv(self.config.dataset.train_csv)
 
         self.df = df
 
@@ -134,25 +134,27 @@ class Validator(Runner):
         return cam
 
     def get_target_layers(self, model_name, model):
-        if model_name == "convnext":
-            return [model.model.layers[-1].blocks[-1].norm1]
-        elif model_name == "efficientnet":
-            return [model.model.blocks[-1][-1].bn1]
-        elif model_name == "resnet":
-            return [model.model.layer4[-1]]
-        elif model_name == "swin":
-            return [model.model.layers[-1].blocks[-1].norm1]
+        # if model_name == "convnext":
+        #     return [model.model.layers[-1].blocks[-1].norm1]
+        # elif model_name == "efficientnet":
+        #     return [model.model.blocks[-1][-1].bn1]
+        # elif model_name == "resnet":
+        #     return [model.model.layer4[-1]]
+        # elif model_name == "swin":
+        if model_name == "net":
+            return [model.backbone.layers[-1].blocks[-1].norm1]
         else:
             raise ValueError(f"Not supported model: {model_name}.")
 
     def get_reshape_transform(self, model_name):
-        if model_name == "convnext":
-            return reshape_transform
-        elif model_name == "efficientnet":
-            return None
-        elif model_name == "resnet":
-            return None
-        elif model_name == "swin":
+        # if model_name == "convnext":
+        #     return reshape_transform
+        # elif model_name == "efficientnet":
+        #     return None
+        # elif model_name == "resnet":
+        #     return None
+        # elif model_name == "swin":
+        if model_name == "net":
             return reshape_transform
         else:
             raise ValueError(f"Not supported model: {model_name}.")
@@ -203,7 +205,7 @@ class Validator(Runner):
         )
 
 
-def reshape_transform(tensor, height=12, width=12):
+def reshape_transform(tensor, height=7, width=7):
     result = tensor.reshape(tensor.size(0), height, width, tensor.size(2))
     result = result.permute(0, 3, 1, 2)
     return result
@@ -211,7 +213,7 @@ def reshape_transform(tensor, height=12, width=12):
 
 class Tester(Runner):
     def load_df(self):
-        df = pd.read_csv(self.config.dataset.test_df)
+        df = pd.read_csv(self.config.dataset.test_csv)
 
         self.df = df
 
