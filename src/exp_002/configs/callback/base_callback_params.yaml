@@ -18,7 +18,7 @@ model_loss_checkpoint:
   filename: fold
   monitor: val_loss
   verbose: false
-  save_last: false
+  save_last: true
   save_top_k: 1
   mode: min
   save_weights_only: true
@@ -29,7 +29,7 @@ model_score_checkpoint:
   filename: fold
   monitor: val_score
   verbose: false
-  save_last: false
+  save_last: true
   save_top_k: 1
   mode: max
   save_weights_only: true

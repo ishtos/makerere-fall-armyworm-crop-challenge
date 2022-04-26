@@ -76,7 +76,7 @@ class MyLightningModule(LightningModule):
     def training_epoch_end(self, outputs):
         for i, loss_name in enumerate(self.config.loss.names):
             if loss_name == "OUSMLoss":
-                self.losses[i][1].update()
+                self.losses[i][1].update()  # TODO: refactor
         self.__epoch_end(outputs, "train")
 
     def validation_epoch_end(self, outputs):

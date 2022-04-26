@@ -107,10 +107,10 @@ class Validator(Runner):
     def run_oof(self):
         oofs = np.zeros((len(self.df), self.config.model.params.num_classes))
         for fold in range(self.config.preprocess.fold.n_splits):
-            valid_df = self.df[self.df["fold"] == fold].reset_index(drop=True)
+            valid_df = self.df[self.df["fold"] == fold]
             model = self.models[fold]
             dataloader = self.load_dataloader(valid_df, "valid")
-            oofs[valid_df.index] = self.oof(model, dataloader)
+            oofs[valid_df.index, :] = self.oof(model, dataloader)
 
         self.oofs = oofs
         self.save_oof()

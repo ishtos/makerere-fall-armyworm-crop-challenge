@@ -7,16 +7,15 @@ from tqdm import tqdm
 
 
 class MyDataset(Dataset):
-    def __init__(self, config, df, transforms=None, phase="train"):
+    def __init__(self, config, df, phase="train", transforms=None):
         self.config = config
         self.image_paths = df["image_path"].values
         if phase in ["train", "valid"]:
             self.targets = df[config.dataset.target].values
+        self.phase = phase
         self.transforms = transforms
         self.store_train = phase == "train" and config.dataset.store_train
         self.store_valid = phase == "valid" and config.dataset.store_valid
-        self.phase = phase
-        self.len = len(self.image_paths)
 
         if self.store_train or self.store_valid:
             self.images = [
@@ -39,7 +38,7 @@ class MyDataset(Dataset):
             return image
 
     def __len__(self):
-        return self.len
+        return len(self.image_paths)
 
     def load_image(self, image_path, config):
         image = cv2.imread(image_path)
@@ -65,4 +64,4 @@ class MyDataset(Dataset):
 # --------------------------------------------------
 def get_dataset(config, df, phase, apply_transforms=True):
     transforms = get_transforms(config, phase) if apply_transforms else None
-    return MyDataset(config, df, transforms, phase)
+    return MyDataset(config, df, phase, transforms)

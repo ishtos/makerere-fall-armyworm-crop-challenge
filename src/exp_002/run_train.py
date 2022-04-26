@@ -102,8 +102,9 @@ def get_callbacks(config, fold):
 
 
 def main(args):
-    fold = args.fold
     torch.autograd.set_detect_anomaly(True)
+
+    fold = args.fold
     with initialize(config_path="configs", job_name="config"):
         config = compose(config_name=args.config_name)
 
