@@ -219,11 +219,11 @@ class Tester(Runner):
 
     def run_inference(self):
         inferences = np.zeros((len(self.df), self.config.model.params.num_classes))
-        for fold in range(self.config.train.n_split):
+        for fold in range(self.config.preprocess.fold.n_split):
             model = self.models[fold]
             dataloader = self.load_dataloader(self.df, "test")
             inferences += self.inference(model, dataloader)
-        inferences = inferences / self.config.train.n_split
+        inferences = inferences / self.config.preprocess.fold.n_split
 
         self.inferences = inferences
         self.save_inference()

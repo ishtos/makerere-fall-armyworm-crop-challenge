@@ -19,10 +19,10 @@
 # done
 # echo "<-- END TRAIN"
 
-echo "START VALID --->"
-python run_valid.py --ckpt loss --cam --batch_size 16
-python run_valid.py --ckpt score --cam --batch_size 16
-echo "<--- END VALID"
+# echo "START VALID --->"
+# python run_valid.py --ckpt loss --cam --batch_size 16
+# python run_valid.py --ckpt score --cam --batch_size 16
+# echo "<--- END VALID"
 
 echo "START TEST PREPROCESS --->"
 python run_test_preprocess.py --config_name config.yaml
