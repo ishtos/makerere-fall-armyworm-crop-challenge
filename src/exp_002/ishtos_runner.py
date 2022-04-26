@@ -95,7 +95,7 @@ class Runner:
                 preds = logits.softmax(dim=1).cpu().numpy()
                 inferences.append(preds)
 
-        return np.concatenate(inferences)[:, 1]
+        return np.concatenate(inferences)
 
 
 class Validator(Runner):
@@ -230,7 +230,7 @@ class Tester(Runner):
 
     def save_inference(self):
         df = self.df.copy()
-        df.loc[:, self.config.dataset.target] = self.inferences
+        df.loc[:, self.config.dataset.target] = self.inferences[:, 1]
         df.to_csv(
             os.path.join(self.config.general.exp_dir, f"inferences_{self.ckpt}.csv"),
             index=False,
