@@ -1,4 +1,4 @@
-# !/bin/bash
+#!/bin/bash
 
 echo "START PREPROCESS --->"
 python run_preprocess.py --config_name config.yaml
