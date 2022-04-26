@@ -1,28 +1,28 @@
-#!/bin/bash
+# !/bin/bash
 
-# echo "START PREPROCESS --->"
-# python run_preprocess.py --config_name config.yaml
-# echo "<--- END PREPROCESS"
+echo "START PREPROCESS --->"
+python run_preprocess.py --config_name config.yaml
+echo "<--- END PREPROCESS"
 
-# echo "START TRAIN --->"
-# for i in `seq 0 4`
-# do
-#     echo "START - FOLD: $i"
-#     python run_train.py --config_name config.yaml --fold $i
+echo "START TRAIN --->"
+for i in `seq 0 4`
+do
+    echo "START - FOLD: $i"
+    python run_train.py --config_name config.yaml --fold $i
 
-#     ret=$?
-#     if [ $ret -ne 0 ]; then
-#         echo "RAISED EXCEPTION"
-#         exit 1
-#     fi
-#     echo "END - FOLD: $i"
-# done
-# echo "<-- END TRAIN"
+    ret=$?
+    if [ $ret -ne 0 ]; then
+        echo "RAISED EXCEPTION"
+        exit 1
+    fi
+    echo "END - FOLD: $i"
+done
+echo "<-- END TRAIN"
 
-# echo "START VALID --->"
-# python run_valid.py --ckpt loss --cam --batch_size 16
-# python run_valid.py --ckpt score --cam --batch_size 16
-# echo "<--- END VALID"
+echo "START VALID --->"
+python run_valid.py --ckpt loss --cam --batch_size 16
+python run_valid.py --ckpt score --cam --batch_size 16
+echo "<--- END VALID"
 
 echo "START TEST PREPROCESS --->"
 python run_test_preprocess.py --config_name config.yaml
