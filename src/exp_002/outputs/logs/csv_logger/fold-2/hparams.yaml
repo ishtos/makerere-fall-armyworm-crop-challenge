@@ -1,0 +1,223 @@
+general:
+  debug: false
+  seed: 42
+  exp_dir: ./outputs
+train:
+  mixup:
+    enable: false
+    alpha: 1
+    duration: 0
+    p: 0.5
+logger:
+  csv_logger:
+    enable: true
+    save_dir: logs
+    name: csv_logger
+    version: fold
+  wandb_logger:
+    enable: true
+    entity: ishtos
+    save_dir: .
+    name: fold
+    offline: false
+    project: makerere-fall-armyworm-crop-challenge
+    log_model: all
+    group: exp_002
+trainer:
+  accumulate_grad_batches: 1
+  amp_backend: native
+  benchmark: false
+  deteministic: true
+  gpus: 1
+  gradient_clip_val: 0
+  gradient_clip_algorithm: norm
+  precision: 16
+  max_epochs: 10
+  resume_from_checkpoint: None
+  stochastic_weight_avg: false
+preprocess:
+  base_dir: ../../data
+  image_dir: image
+  test_image_dir: image
+  train_csv: csv/train.csv
+  test_csv: csv/test.csv
+  fold:
+    name: StratifiedKFold
+    n_splits: 5
+    group: group
+dataset:
+  train_csv: train.csv
+  test_csv: test.csv
+  id: Image_id
+  target: Label
+  store_train: true
+  store_valid: true
+  grayscale: false
+  gradcam: false
+  loader:
+    batch_size: 32
+    num_workers: 8
+transforms:
+  train_version: v2
+  valid_version: v1
+  params:
+    height: 224
+    width: 224
+    p: 0.5
+model:
+  name: net
+  params:
+    base_model: swin_base_patch4_window7_224
+    pretrained: true
+    checkpoint_path: null
+    num_classes: 2
+    neck_version: null
+    head_version: v1
+optimizer:
+  name: AdamW
+  Adam:
+    params:
+      lr: 5.0e-05
+      betas:
+      - 0.9
+      - 0.999
+      eps: 1.0e-08
+      weight_decay: 0
+  AdamW:
+    params:
+      lr: 1.0e-05
+      betas:
+      - 0.9
+      - 0.999
+      eps: 1.0e-08
+      weight_decay: 1.0e-08
+  MADGRAD:
+    params:
+      lr: 0.001
+      eps: 1.0e-08
+  SAM:
+    params:
+      base_optimizer: Adam
+  SGD:
+    params:
+      lr: 0.001
+      momentum: 0.9
+scheduler:
+  name: CosineAnnealingWarmRestarts
+  interval: step
+  monitor: val_loss
+  CosineAnnealingLR:
+    params:
+      T_max: 10
+      eta_min: 1.0e-05
+      last_epoch: -1
+  CosineAnnealingWarmRestarts:
+    params:
+      T_0: 10
+      T_mult: 1
+      eta_min: 1.0e-06
+      last_epoch: -1
+  cosine_schedule_with_warmup:
+    params:
+      max_epochs: 10
+      num_warmup_steps_factor: 10
+  GradualWarmupSchedulerV2:
+    params:
+      total_epoch: 10
+      warmup_epoch: 2
+      warmup_factor: 10
+      eta_min: 1.0e-05
+  ReduceLROnPlateau:
+    params:
+      mode: min
+      factor: 0.75
+      patience: 10
+      threshold: 0.0001
+      threshold_mode: rel
+      cooldown: 0
+      min_lr: 1.0e-05
+      eps: 1.0e-08
+loss:
+  names:
+  - CrossEntropyLoss
+  weights:
+  - 1
+  BCEWithLogitsLoss:
+    params:
+      reduction: mean
+  CrossEntropyLoss:
+    params:
+      reduction: mean
+  FocalLoss:
+    params:
+      alpha: 1
+      gamma: 2
+      reduction: mean
+      eps: 1.0e-07
+  L1Loss:
+    params:
+      reduction: mean
+  MSELoss:
+    params:
+      reduction: mean
+  NLLLoss:
+    params:
+      reduction: mean
+  OUSMLoss:
+    params:
+      base_loss_name: RMSELoss
+      base_reduction: mean
+      k: 1
+      trigger: 10
+  RMSELoss:
+    params:
+      reduction: mean
+  SmoothL1Loss:
+    params:
+      reduction: mean
+metric:
+  names:
+  - AUROC
+  Accuracy:
+    params:
+      average: micro
+      num_classes: 2
+  AUROC:
+    params:
+      num_classes: 2
+  MeanSquaredError:
+    params:
+      squared: true
+callback:
+  lr_monitor:
+    enable: true
+    log_momentum: false
+  early_stopping:
+    enable: false
+    monitor: val_loss
+    patience: 10
+    verbose: false
+    mode: min
+    strict: true
+    check_finite: true
+    check_on_train_epoch_end: false
+  model_loss_checkpoint:
+    enable: true
+    dirpath: checkpoints/loss
+    filename: fold
+    monitor: val_loss
+    verbose: false
+    save_last: false
+    save_top_k: 1
+    mode: min
+    save_weights_only: true
+  model_score_checkpoint:
+    enable: true
+    dirpath: checkpoints/score
+    filename: fold
+    monitor: val_score
+    verbose: false
+    save_last: false
+    save_top_k: 1
+    mode: max
+    save_weights_only: true
