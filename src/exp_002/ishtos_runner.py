@@ -95,7 +95,7 @@ class Runner:
                 preds = logits.softmax(dim=1).cpu().numpy()
                 inferences.append(preds)
 
-        return np.concatenate(inferences)
+        return np.concatenate(inferences)[:, 1]
 
 
 class Validator(Runner):
