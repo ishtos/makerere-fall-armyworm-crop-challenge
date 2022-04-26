@@ -230,6 +230,7 @@ class Tester(Runner):
 
     def save_inference(self):
         df = self.df.copy()
+        df = df.drop("image_path", axis=1)
         df.loc[:, self.config.dataset.target] = self.inferences[:, 1]
         df.to_csv(
             os.path.join(self.config.general.exp_dir, f"inferences_{self.ckpt}.csv"),
